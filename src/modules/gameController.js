@@ -58,7 +58,18 @@ const GameController = (() => {
 
       if (attackResult === 'hit') {
         DOM.updateMessage('You hit a ship!');
-      } else if (attackResult === 'miss') {
+        DOM.renderBoard(computer.getBoard(), 'computer-board', true); //*** */
+        addEventListeners(); // Reattach event listeners to the re-rendered board
+        
+        if (computer.getBoard().areAllShipsSunk()) {
+          DOM.updateMessage('Player wins! 🎉');
+          endGame();
+          return;
+      }
+
+      // Allow the player to attack again if it's a hit
+      return;
+    }else if (attackResult === 'miss') {
         DOM.updateMessage('You missed!');
       } else {
         DOM.updateMessage('You already attacked this spot!');
@@ -67,17 +78,11 @@ const GameController = (() => {
 
       DOM.renderBoard(computer.getBoard(), 'computer-board', true);
 
-      if (computer.getBoard().areAllShipsSunk()) {
-        DOM.updateMessage('Player wins! 🎉');
-        endGame();
-        return;
-      }
-
-      
-    // Switch to computer's turn
+      // Pass turn to computer
       currentPlayer = computer;
       setTimeout(computerTurn, 1000); // Delay computer's turn for better UX
-    }
+    };
+
 
 
   const computerTurn = () => {
@@ -94,14 +99,18 @@ const GameController = (() => {
 
       if (attackResult === 'hit') {
         DOM.updateMessage('Computer hit your ship!');
+
+        if (player.getBoard().areAllShipsSunk()) {
+          DOM.updateMessage('Computer wins! 💻');
+          endGame();
+          return;
+        }
+
+        // Allow the computer to attack again if it's a hit
+        setTimeout(computerTurn, 1000); // Delay for better UX
+        return;
       } else {
         DOM.updateMessage('Computer missed!');
-      }
-
-      if (player.getBoard().areAllShipsSunk()) {
-        DOM.updateMessage('Computer wins! 💻');
-        endGame();
-        return;
       }
 
       currentPlayer = player;
