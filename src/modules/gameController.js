@@ -66,7 +66,7 @@ const GameController = (() => {
       }
 
       DOM.renderBoard(computer.getBoard(), 'computer-board', true);
-      
+
       if (computer.getBoard().areAllShipsSunk()) {
         DOM.updateMessage('Player wins! 🎉');
         endGame();
@@ -76,7 +76,7 @@ const GameController = (() => {
       
     // Switch to computer's turn
       currentPlayer = computer;
-      setTimeout(computerTurn, 1000); // Delay computer's turn for better UX
+      setTimeout(computerTurn, 10); // Delay computer's turn for better UX
     }
 
 
@@ -109,7 +109,7 @@ const GameController = (() => {
 
       // Re-enable event listeners for player's turn
       addEventListeners();
-    }, 1000); // Simulate computer "thinking" time
+    }, 10); // Simulate computer "thinking" time
   };
 
   const endGame = () => {
