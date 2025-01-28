@@ -1,5 +1,5 @@
 import Player from '../modules/player';
-import Gameboard from '../modules/gameboard';
+import Gameboard from '../modules/gameBoard';
 
 describe('Player Factory', () => {
   let player1, player2, aiPlayer;

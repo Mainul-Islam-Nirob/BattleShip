@@ -1,10 +1,10 @@
-import Gameboard from './gameboard';
+import GameBoard from './gameBoard';
 
 const Player = (() => {
   const createPlayer = (name, isComputer = false, boardSize = 10) => {
     const playerName = name;
     const isAI = isComputer;
-    const gameboard = Gameboard.createBoard(boardSize);
+    const gameBoard = GameBoard.createBoard(boardSize);
     const attackHistory = new Set(); // Store attacks to prevent duplicates
 
     // Attack opponent's board
@@ -28,7 +28,7 @@ const Player = (() => {
     };
 
     const getName = () => playerName;
-    const getBoard = () => gameboard;
+    const getBoard = () => gameBoard;
     const isComputerPlayer = () => isAI;
     const getAttackHistory = () => [...attackHistory];  
 

@@ -1,11 +1,11 @@
-import Gameboard from '../modules/gameboard';
+import GameBoard from '../modules/gameBoard';
 import Ship from '../modules/ship';
 
-describe('Gameboard Factory', () => {
+describe('GameBoard Factory', () => {
   let board;
 
   beforeEach(() => {
-    board = Gameboard.createBoard();
+    board = GameBoard.createBoard();
   });
 
   // Ship placement tests

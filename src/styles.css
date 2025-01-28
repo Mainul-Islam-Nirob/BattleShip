@@ -1,3 +1,42 @@
-body {
-    background-color: goldenrod;
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  grid-template-rows: repeat(10, 30px);
+  gap: 2px;
+  margin-bottom: 20px;
 }
+
+.cell {
+  width: 30px;
+  height: 30px;
+  background-color: lightblue;
+  border: 1px solid #000;
+}
+
+.enemy-cell {
+  cursor: pointer;
+}
+
+.ship {
+  background-color: #3498db; /* Blue for player's ships */
+}
+
+.hit {
+  background-color: #e74c3c; /* Red for hit ships */
+}
+
+.miss {
+  background-color: #ffffff; /* Grey for missed shots */
+}
+
+
+.enemy-cell.hover {
+  background-color: #f1c40f; /* Yellow for hover effect */
+}
+
+#game-message {
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+

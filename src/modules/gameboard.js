@@ -1,6 +1,6 @@
 import Ship from './ship';
 
-const Gameboard = (() => {
+const GameBoard = (() => {
   const createBoard = (size = 10) => {
     const board = Array.from({ length: size }, () => Array(size).fill(null));
     const ships = [];
@@ -58,4 +58,4 @@ const Gameboard = (() => {
   return { createBoard };
 })();
 
-export default Gameboard;
+export default GameBoard;
