@@ -25,13 +25,16 @@
   background-color: #e74c3c; /* Red for hit ships */
 }
 
+.damaged {
+  background-color: #f1c40f;
+}
 .miss {
   background-color: #ffffff; /* Grey for missed shots */
 }
 
 
-.enemy-cell.hover {
-  background-color: #f1c40f; /* Yellow for hover effect */
+#computer-board .cell:hover {
+  background-color: rgba(255, 0, 0, 0.3); /* Color when hovered */
 }
 
 #game-message {

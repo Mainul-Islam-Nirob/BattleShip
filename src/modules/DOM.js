@@ -17,6 +17,8 @@ const DOM = (() => {
           // Add styles based on cell state
           if (board[y][x]?.getSunk()) {
             cell.classList.add('hit'); // Hit ship
+          }else if (board[y][x] && board[y][x].getDamage(x, y)) {
+            cell.classList.add('damaged'); // Shot ship (hit but not sunk)
           } else if (board[y][x]) {
             if (!isEnemy) cell.classList.add('ship'); // Show ships only for the player
           } else if (missedShots.some((shot) => shot.x === x && shot.y === y)) {

@@ -66,7 +66,7 @@ const GameController = (() => {
       }
 
       DOM.renderBoard(computer.getBoard(), 'computer-board', true);
-
+      
       if (computer.getBoard().areAllShipsSunk()) {
         DOM.updateMessage('Player wins! 🎉');
         endGame();
