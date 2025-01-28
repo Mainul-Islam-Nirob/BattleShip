@@ -31,6 +31,26 @@ const GameBoard = (() => {
       ships.push(ship);
       return true;
     };
+    
+
+      // Check if placement is valid
+      const isValidPlacement = (length, x, y, direction) => {
+        for (let i = 0; i < length; i++) {
+          const newX = direction === 'horizontal' ? x + i : x;
+          const newY = direction === 'vertical' ? y + i : y;
+  
+          // Check if within bounds
+          if (newX >= 10 || newY >= 10) {
+            return false;
+          }
+  
+          // Check for overlapping ships
+          if (board[newY][newX] !== null) {
+            return false;
+          }
+        }
+        return true;
+      };
 
     // Receive attack on board
     const receiveAttack = (x, y) => {
@@ -43,6 +63,19 @@ const GameBoard = (() => {
       }
     };
 
+  // Add a resetBoard method
+  const resetBoard = () => {
+    // Reset the board to null
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        board[y][x] = null;
+      }
+    }
+
+    // Clear the ships array
+    ships.length = 0;
+  };
+
     // Check if all ships have been sunk
     const areAllShipsSunk = () => ships.every((ship) => ship.getSunk());
 
@@ -52,10 +85,12 @@ const GameBoard = (() => {
 
     return {
       placeShip,
+      isValidPlacement,
       receiveAttack,
       areAllShipsSunk,
       getBoard,
       getMissedShots,
+      resetBoard,
     };
   };
 

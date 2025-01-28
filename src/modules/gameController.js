@@ -11,9 +11,11 @@ const GameController = (() => {
     player = Player.createPlayer('Player');
     computer = Player.createPlayer('Computer', true);
 
-    // Predefined ship placements for player and computer
-    placeShips(player);
+    // Randomly place ships for computer
     placeShips(computer);
+
+    // Add random placement button for the player
+    addRandomPlacementButton();
 
     currentPlayer = player;
 
@@ -27,19 +29,59 @@ const GameController = (() => {
     setTimeout(addEventListeners, 100);
   };
 
+  const generateRandomPosition = (board, shipLength) => {
+    let isValid = false;
+    let direction, x, y;
+  
+    while (!isValid) {
+      direction = Math.random() < 0.5 ? 'horizontal' : 'vertical'; // Random direction
+      x = Math.floor(Math.random() * (direction === 'horizontal' ? 10 - shipLength : 10)); // Random x
+      y = Math.floor(Math.random() * (direction === 'vertical' ? 10 - shipLength : 10)); // Random y
+  
+      // Check if the ship overlaps with any existing ships
+      isValid = board.isValidPlacement(shipLength, x, y, direction);
+    }
+  
+    return { x, y, direction };
+  };
+
   const placeShips = (player) => {
     const ships = [
-      { name: 'Destroyer', length: 2, x: 0, y: 0, direction: 'horizontal' },
-      { name: 'Submarine', length: 3, x: 2, y: 2, direction: 'vertical' },
-      { name: 'Cruiser', length: 3, x: 4, y: 4, direction: 'horizontal' },
-      { name: 'Battleship', length: 4, x: 6, y: 6, direction: 'vertical' },
-      { name: 'Carrier', length: 5, x: 5, y: 1, direction: 'horizontal' },
+      { name: 'Destroyer', length: 2 },
+      { name: 'Submarine', length: 3 },
+      { name: 'Cruiser', length: 3 },
+      { name: 'Battleship', length: 4 },
+      { name: 'Carrier', length: 5 },
     ];
 
     ships.forEach((ship) => {
-      player.getBoard().placeShip(ship.name, ship.length, ship.x, ship.y, ship.direction);
+      const { x, y, direction } = generateRandomPosition(player.getBoard(), ship.length);
+      player.getBoard().placeShip(ship.name, ship.length, x, y, direction);
     });
   };
+
+  const addRandomPlacementButton = () => {
+    const button = document.createElement('button');
+    button.textContent = 'Place Ships Randomly';
+
+    button.addEventListener('click', () => {
+      // Reset both player's board before placing new ships
+      player.getBoard().resetBoard();
+      computer.getBoard().resetBoard();
+
+      // Place ships randomly on both boards
+      placeShips(player);
+      placeShips(computer);
+
+      DOM.renderBoard(player.getBoard(), 'player-board');
+      DOM.renderBoard(computer.getBoard(), 'computer-board', true); 
+      
+      DOM.updateMessage('Your ships have been placed randomly!');
+    });
+  
+    document.body.appendChild(button);
+  };
+  
 
   const addEventListeners = () => {
     const computerCells = document.querySelectorAll('#computer-board .enemy-cell');
@@ -60,7 +102,7 @@ const GameController = (() => {
         DOM.updateMessage('You hit a ship!');
         DOM.renderBoard(computer.getBoard(), 'computer-board', true); //*** */
         addEventListeners(); // Reattach event listeners to the re-rendered board
-        
+
         if (computer.getBoard().areAllShipsSunk()) {
           DOM.updateMessage('Player wins! 🎉');
           endGame();
