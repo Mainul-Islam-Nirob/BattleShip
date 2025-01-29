@@ -78,7 +78,12 @@ const GameBoard = (() => {
    // ✅ Clear missed shots as well
    missedShots.length = 0;
   };
+    
 
+  const alreadyAttacked = (x, y) => {
+    return board[y][x] === 'miss' || board[y][x] === 'hit';
+  };
+  
     // Check if all ships have been sunk
     const areAllShipsSunk = () => ships.every((ship) => ship.getSunk());
 
@@ -96,6 +101,7 @@ const GameBoard = (() => {
       getMissedShots,
       resetBoard,
       getShips,
+      alreadyAttacked,
     };
   };
 

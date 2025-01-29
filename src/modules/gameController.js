@@ -5,6 +5,9 @@ const GameController = (() => {
   let player;
   let computer;
   let currentPlayer;
+  let lastHit = null;
+  let hitStack = [];
+  let direction = null;
 
   const initGame = () => {
     // Create player and computer
@@ -140,14 +143,24 @@ const GameController = (() => {
 
     setTimeout(() => {
       let attackResult;
+      let attackCoords;
 
-      do {
-        attackResult = computer.randomAttack(player.getBoard());
-      } while (attackResult === 'already attacked');
+      if (hitStack.length > 0) {
+        attackCoords = hitStack.pop();
+      } else if (lastHit) {
+        attackCoords = getNextTarget(lastHit);
+      } else {
+        attackCoords = getRandomCoords();
+      }
+
+      attackResult = computer.attack(player.getBoard(), attackCoords[0], attackCoords[1]);
 
       DOM.renderBoard(player.getBoard(), 'player-board');
 
+
       if (attackResult === 'hit') {
+        lastHit = attackCoords;
+        addAdjacentTargets(attackCoords);
         DOM.updateMessage('Computer hit your ship!');
 
         if (player.getBoard().areAllShipsSunk()) {
@@ -161,6 +174,8 @@ const GameController = (() => {
         return;
       } else {
         DOM.updateMessage('Computer missed!');
+        lastHit = null;
+        direction = null;
       }
 
       currentPlayer = player;
@@ -169,6 +184,51 @@ const GameController = (() => {
       // Re-enable event listeners for player's turn
       addEventListeners();
     }, 1000); // Simulate computer "thinking" time
+  };
+
+  const getNextTarget = ([x, y]) => {
+    if (!direction) {
+      direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+    }
+
+    let nextTarget;
+    if (direction === 'horizontal') {
+      nextTarget = [x + 1, y];
+      if (nextTarget[0] >= 10 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
+        nextTarget = [x - 1, y];
+        if (nextTarget[0] < 0 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
+          direction = 'vertical';
+          nextTarget = [x, y + 1];
+        }
+      }
+    } else {
+      nextTarget = [x, y + 1];
+      if (nextTarget[1] >= 10 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
+        nextTarget = [x, y - 1];
+        if (nextTarget[1] < 0 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
+          direction = 'horizontal';
+          nextTarget = [x + 1, y];
+        }
+      }
+    }
+
+    return nextTarget;
+  };
+
+  const getRandomCoords = () => {
+    let x, y;
+    do {
+      x = Math.floor(Math.random() * 10);
+      y = Math.floor(Math.random() * 10);
+    } while (player.getBoard().alreadyAttacked(x, y));
+    return [x, y];
+  };
+
+  const addAdjacentTargets = ([x, y]) => {
+    const possibleMoves = [
+      [x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]
+    ].filter(([newX, newY]) => newX >= 0 && newX < 10 && newY >= 0 && newY < 10);
+    hitStack.push(...possibleMoves);
   };
 
   const endGame = () => {
@@ -201,15 +261,7 @@ const GameController = (() => {
       const newCell = cell.cloneNode(true);
       cell.parentNode.replaceChild(newCell, cell);
     });
-  
-
-      // ✅ Reset the UI (clear styles for missed shots)
-      // const allCells = document.querySelectorAll('.cell');
-      // allCells.forEach(cell => {
-      //     cell.classList.remove('hit', 'miss', 'damaged'); // Remove any hit or miss styling
-      // });
-  
-  
+ 
     // Re-render boards
     DOM.renderBoard(player.getBoard(), 'player-board');
     DOM.renderBoard(computer.getBoard(), 'computer-board', true);
