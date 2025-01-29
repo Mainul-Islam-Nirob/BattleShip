@@ -65,18 +65,20 @@ const GameController = (() => {
     button.textContent = 'Place Ships Randomly';
 
     button.addEventListener('click', () => {
-      // Reset both player's board before placing new ships
-      player.getBoard().resetBoard();
-      computer.getBoard().resetBoard();
+      resetGame(); // Reset the game state
 
       // Place ships randomly on both boards
       placeShips(player);
       placeShips(computer);
 
+      // Reset turn to player
+      currentPlayer = player;
+
       DOM.renderBoard(player.getBoard(), 'player-board');
       DOM.renderBoard(computer.getBoard(), 'computer-board', true); 
       
-      DOM.updateMessage('Your ships have been placed randomly!');
+      DOM.updateMessage('Ships have been placed randomly! Game starts now!');
+      addEventListeners();
     });
   
     document.body.appendChild(button);
@@ -93,6 +95,12 @@ const GameController = (() => {
   const handlePlayerAttack = (e) => {
     if (currentPlayer !== player) return; // Ensure it's the player's turn
     
+    // Check if all ships are placed before allowing the attack
+    if (player.getBoard().getShips().length === 0) {
+      DOM.updateMessage('You must place all your ships before starting!');
+      return;
+    }
+
     const x = parseInt(e.target.dataset.x, 10);
     const y = parseInt(e.target.dataset.y, 10);
 
@@ -179,6 +187,41 @@ const GameController = (() => {
     document.body.appendChild(restartButton);
   };
 
+  const resetGame = () => {
+    // Reset player and computer boards
+    player.getBoard().resetBoard();
+    computer.getBoard().resetBoard();
+  
+    // Reset turn to player
+    currentPlayer = player;
+  
+    // Clear all event listeners and reinitialize them
+    const computerCells = document.querySelectorAll('#computer-board .enemy-cell');
+    computerCells.forEach((cell) => {
+      const newCell = cell.cloneNode(true);
+      cell.parentNode.replaceChild(newCell, cell);
+    });
+  
+
+      // ✅ Reset the UI (clear styles for missed shots)
+      // const allCells = document.querySelectorAll('.cell');
+      // allCells.forEach(cell => {
+      //     cell.classList.remove('hit', 'miss', 'damaged'); // Remove any hit or miss styling
+      // });
+  
+  
+    // Re-render boards
+    DOM.renderBoard(player.getBoard(), 'player-board');
+    DOM.renderBoard(computer.getBoard(), 'computer-board', true);
+  
+    // Update message
+    DOM.updateMessage('Game reset! Place your ships or click "Place Ships Randomly" to start.');
+
+    addEventListeners();
+
+  };
+  
+
   // Expose internal state and methods for testing
   return {
     initGame,
@@ -187,6 +230,7 @@ const GameController = (() => {
     getCurrentPlayer: () => currentPlayer,
     handlePlayerAttack,
     computerTurn,
+    resetGame,
   };
 })();
 

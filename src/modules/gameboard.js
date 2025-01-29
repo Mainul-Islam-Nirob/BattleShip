@@ -72,8 +72,11 @@ const GameBoard = (() => {
       }
     }
 
-    // Clear the ships array
-    ships.length = 0;
+   // Clear the ships array
+   ships.length = 0;
+
+   // ✅ Clear missed shots as well
+   missedShots.length = 0;
   };
 
     // Check if all ships have been sunk
@@ -82,6 +85,7 @@ const GameBoard = (() => {
     // Get board state for testing/debugging
     const getBoard = () => board;
     const getMissedShots = () => missedShots;
+    const getShips = () => ships;
 
     return {
       placeShip,
@@ -91,6 +95,7 @@ const GameBoard = (() => {
       getBoard,
       getMissedShots,
       resetBoard,
+      getShips,
     };
   };
 
