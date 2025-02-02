@@ -9,6 +9,7 @@ const Player = (() => {
 
     // Attack opponent's board
     const attack = (opponentBoard, x, y) => {
+      console.log("attaking at", x, y)
       if (attackHistory.has(`${x},${y}`)) {
         return 'already attacked';
       }

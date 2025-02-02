@@ -124,7 +124,15 @@ const GameController = (() => {
       return;
     }else if (attackResult === 'miss') {
         DOM.updateMessage('You missed!');
-      } else {
+      }else if (attackResult === 'sunk') {  
+        DOM.updateMessage('You sunk a ship! 🚢🔥');
+        if (computer.getBoard().areAllShipsSunk()) {
+          DOM.updateMessage('Player wins! 🎉');
+          endGame();
+        }
+        return;
+      }
+       else {
         DOM.updateMessage('You already attacked this spot!');
         return;
       }
@@ -145,13 +153,22 @@ const GameController = (() => {
       let attackResult;
       let attackCoords;
 
-      if (hitStack.length > 0) {
-        attackCoords = hitStack.pop();
-      } else if (lastHit) {
-        attackCoords = getNextTarget(lastHit);
-      } else {
+      // Pick a move from hitStack first
+      while (hitStack.length > 0) {
+        let potentialMove = hitStack.pop();
+        if (isValidMove(potentialMove[0], potentialMove[1])) {
+          attackCoords = potentialMove;
+          break;
+        }
+      }
+
+      // If hitStack is empty or moves are invalid, reset targeting and choose randomly
+      if (!attackCoords || lastHit === null) {
+        direction = null;
+        hitStack = [];
         attackCoords = getRandomCoords();
       }
+  
 
       attackResult = computer.attack(player.getBoard(), attackCoords[0], attackCoords[1]);
 
@@ -160,7 +177,12 @@ const GameController = (() => {
 
       if (attackResult === 'hit') {
         lastHit = attackCoords;
-        addAdjacentTargets(attackCoords);
+
+        if (!direction) {
+          determineDirection(lastHit, attackCoords);
+        }
+
+        addDirectionalTargets(attackCoords);
         DOM.updateMessage('Computer hit your ship!');
 
         if (player.getBoard().areAllShipsSunk()) {
@@ -172,48 +194,88 @@ const GameController = (() => {
         // Allow the computer to attack again if it's a hit
         setTimeout(computerTurn, 1000); // Delay for better UX
         return;
-      } else {
+      } else if (attackResult === 'miss') {
+        if (direction) {
+          reverseDirection();
+        }
         DOM.updateMessage('Computer missed!');
+
+      }else if (attackResult === 'sunk') {
         lastHit = null;
         direction = null;
+        hitStack = [];
+        DOM.updateMessage('Computer sank your ship!');
       }
 
       currentPlayer = player;
       DOM.updateMessage("Player's turn");
-
-      // Re-enable event listeners for player's turn
       addEventListeners();
-    }, 1000); // Simulate computer "thinking" time
+    }, 1000);
   };
 
-  const getNextTarget = ([x, y]) => {
+  const determineNextMove = ([x, y]) => {
+    const possibleMoves = [];
+  
     if (!direction) {
       direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
     }
-
-    let nextTarget;
+  
     if (direction === 'horizontal') {
-      nextTarget = [x + 1, y];
-      if (nextTarget[0] >= 10 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
-        nextTarget = [x - 1, y];
-        if (nextTarget[0] < 0 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
-          direction = 'vertical';
-          nextTarget = [x, y + 1];
-        }
-      }
+      if (isValidMove(x + 1, y)) possibleMoves.push([x + 1, y]);
+      if (isValidMove(x - 1, y)) possibleMoves.push([x - 1, y]);
     } else {
-      nextTarget = [x, y + 1];
-      if (nextTarget[1] >= 10 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
-        nextTarget = [x, y - 1];
-        if (nextTarget[1] < 0 || player.getBoard().alreadyAttacked(nextTarget[0], nextTarget[1])) {
-          direction = 'horizontal';
-          nextTarget = [x + 1, y];
-        }
-      }
+      if (isValidMove(x, y + 1)) possibleMoves.push([x, y + 1]);
+      if (isValidMove(x, y - 1)) possibleMoves.push([x, y - 1]);
     }
-
-    return nextTarget;
+  
+    if (possibleMoves.length === 0) {
+      reverseDirection();
+      return determineNextMove([x, y]); // Retry in opposite direction
+    }
+  
+    return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
   };
+
+  const determineDirection = ([x1, y1], [x2, y2]) => {
+    if (x1 === x2) {
+      direction = 'vertical';
+    } else if (y1 === y2) {
+      direction = 'horizontal';
+    }
+  };
+  
+  const reverseDirection = () => {
+    if (direction === 'horizontal') {
+      direction = 'vertical';
+    } else {
+      direction = 'horizontal';
+    }
+  
+    hitStack.reverse(); // Try opposite moves
+  };
+  
+  
+  const isValidMove = (x, y) => {
+    return (
+      x >= 0 && x < 10 && y >= 0 && y < 10 &&
+      !computer.getAttackHistory().includes(`${x},${y}`) 
+    );
+  };
+  
+  const addDirectionalTargets = ([x, y]) => {
+    const potentialMoves = [];
+  
+    if (direction === 'horizontal') {
+      potentialMoves.push([x + 1, y], [x - 1, y]);
+    } else {
+      potentialMoves.push([x, y + 1], [x, y - 1]);
+    }
+  
+    // Add only unclicked, valid moves
+    hitStack.push(...potentialMoves.filter(([newX, newY]) => isValidMove(newX, newY)));
+  };
+  
+  
 
   const getRandomCoords = () => {
     let x, y;
@@ -224,12 +286,6 @@ const GameController = (() => {
     return [x, y];
   };
 
-  const addAdjacentTargets = ([x, y]) => {
-    const possibleMoves = [
-      [x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]
-    ].filter(([newX, newY]) => newX >= 0 && newX < 10 && newY >= 0 && newY < 10);
-    hitStack.push(...possibleMoves);
-  };
 
   const endGame = () => {
     const computerCells = document.querySelectorAll('#computer-board .enemy-cell');

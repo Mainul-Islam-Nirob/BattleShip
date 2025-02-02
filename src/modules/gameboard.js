@@ -55,14 +55,20 @@ const GameBoard = (() => {
     // Receive attack on board
     const receiveAttack = (x, y) => {
       if (board[y][x]) {
-        board[y][x].hit(x, y);
-        return 'hit';
+        const ship = board[y][x];
+        ship.hit(x, y); // Hit the ship
+    
+        if (ship.getSunk()) {
+          return 'sunk';  // Return 'sunk' if the ship is fully hit
+        }
+    
+        return 'hit'; // Otherwise, just return 'hit'
       } else {
         missedShots.push({ x, y });
         return 'miss';
       }
     };
-
+    
   // Add a resetBoard method
   const resetBoard = () => {
     // Reset the board to null
