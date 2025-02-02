@@ -126,6 +126,9 @@ const GameController = (() => {
         DOM.updateMessage('You missed!');
       }else if (attackResult === 'sunk') {  
         DOM.updateMessage('You sunk a ship! 🚢🔥');
+        DOM.renderBoard(computer.getBoard(), 'computer-board', true);
+        addEventListeners();
+        
         if (computer.getBoard().areAllShipsSunk()) {
           DOM.updateMessage('Player wins! 🎉');
           endGame();
