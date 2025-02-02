@@ -205,6 +205,10 @@ const GameController = (() => {
         direction = null;
         hitStack = [];
         DOM.updateMessage('Computer sank your ship!');
+
+        // After sinking a ship, continue with random attacks
+        setTimeout(computerTurn, 1000);
+        return;
       }
 
       currentPlayer = player;
