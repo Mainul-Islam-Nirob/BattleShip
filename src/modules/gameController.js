@@ -207,6 +207,14 @@ const GameController = (() => {
       }else if (attackResult === 'sunk') {
         resetAttackStrategy();
         DOM.updateMessage('Computer sank your ship!');
+
+        if (player.getBoard().areAllShipsSunk()) {
+          DOM.updateMessage('Computer wins! 💻');
+          endGame();
+          return;
+        }
+        
+
         setTimeout(computerTurn, 1000);
         return;
       }
