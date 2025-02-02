@@ -324,7 +324,7 @@ const GameController = (() => {
       x = Math.floor(Math.random() * 10);
       y = Math.floor(Math.random() * 10);
     } while (player.getBoard().alreadyAttacked(x, y)||
-    hitStack.some(([hx, hy]) => hx === x && hy === y));
+    hitStack.some(([hx, hy]) => hx === x && hy === y) || computer.getAttackHistory().includes(`${x},${y}`));
     return [x, y];
   };
 
