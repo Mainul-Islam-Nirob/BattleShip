@@ -7,12 +7,39 @@
   <link rel="stylesheet" href="b88d04fba731603756b1.css" />
 <script defer src="main.js"></script><link href="main.css" rel="stylesheet"></head>
 <body>
-  <h1>Battleship</h1>
-  <div id="game-message"></div>
-  <div class="board-container">
-    <div id="player-board" class="board"></div>
-    <div id="computer-board" class="board"></div>
+  <div id="placement-screen">
+    <h1>Place Your Ships</h1>
+    <div class="placement-container">
+      <div id="placement-board" class="board"></div>
+      <div id="ship-list">
+        <div class="ship" id="carrier">Carrier</div>
+        <div class="ship" id="battleship">Battleship</div>
+        <div class="ship" id="destroyer">Destroyer</div>
+        <div class="ship" id="submarine">Submarine</div>
+        <div class="ship" id="patrol-boat">Patrol Boat</div>
+      </div>
+    </div>
+    <button id="shuffle-btn">Shuffle</button>
+    <button id="rotate-btn">Rotate</button>
+    <button id="start-game-btn">Begin The Battle!</button>
   </div>
-  <script type="module" src="46b441721b8368da070b.js"></script>
+
+  <div id="game-screen" style="display: none;">
+    <h1>Battleship</h1>
+    <div id="game-message">Your Turn</div>
+    <div class="board-container">
+      <div>
+        <h2>Player Board</h2>
+        <div id="player-board" class="board"></div>
+      </div>
+      <div>
+        <h2>Enemy Board</h2>
+        <div id="computer-board" class="board"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="712a1f305c5c7e809d18.js"></script>
 </body>
+
 </html>

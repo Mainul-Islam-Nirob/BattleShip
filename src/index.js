@@ -1,4 +1,8 @@
 import './styles.css';
 import GameController from './modules/gameController';
 
-GameController.initGame();
+document.getElementById('start-game-btn').addEventListener('click', () => {
+    document.getElementById('placement-screen').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'block';
+  });
+  
