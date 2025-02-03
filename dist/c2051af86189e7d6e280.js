@@ -5,6 +5,7 @@ import Player from "./modules/player";
 var player = Player.createPlayer('Player');
 var computer = Player.createPlayer('Computer');
 DOM.renderBoard(player.getBoard(), 'placement-board');
+document.getElementById('start-game-btn').disabled = true;
 document.getElementById('shuffle-btn').addEventListener('click', function () {
   // Reset the game and place ships for both players
   // GameController.resetGame();
@@ -16,7 +17,7 @@ document.getElementById('shuffle-btn').addEventListener('click', function () {
   DOM.renderBoard(computer.getBoard(), 'computer-board', true);
 
   //enable this button after placing ships
-  // document.getElementById('start-game-btn').style.display = 'block';
+  document.getElementById('start-game-btn').disabled = false;
 });
 document.getElementById('start-game-btn').addEventListener('click', function () {
   document.getElementById('placement-screen').style.display = 'none';

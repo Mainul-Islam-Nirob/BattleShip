@@ -7,7 +7,7 @@ const player = Player.createPlayer('Player');
 const computer = Player.createPlayer('Computer');
 
 DOM.renderBoard(player.getBoard(), 'placement-board');
-
+document.getElementById('start-game-btn').disabled = true;
 
 document.getElementById('shuffle-btn').addEventListener('click', () => {
     // Reset the game and place ships for both players
@@ -20,7 +20,7 @@ document.getElementById('shuffle-btn').addEventListener('click', () => {
     DOM.renderBoard(computer.getBoard(), 'computer-board', true);
 
     //enable this button after placing ships
-    // document.getElementById('start-game-btn').style.display = 'block';
+    document.getElementById('start-game-btn').disabled  = false;
 })
 
 document.getElementById('start-game-btn').addEventListener('click', () => {

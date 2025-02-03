@@ -132,3 +132,9 @@ body {
   box-shadow: none;
   transform: scale(0.98);
 }
+
+#start-game-btn:disabled {
+  background: grey;
+  pointer-events: none;
+  cursor: not-allowed;
+}
