@@ -401,6 +401,7 @@ const GameController = (() => {
 
     // Add a "Restart Game" button
     const restartButton = document.createElement('button');
+    restartButton.classList.add('restart-btn', 'btn'); 
     restartButton.textContent = 'Restart Game';
     restartButton.addEventListener('click', () => {
       document.location.reload(); // Reload the page to restart the game
