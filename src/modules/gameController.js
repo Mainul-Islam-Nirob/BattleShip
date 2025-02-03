@@ -28,7 +28,7 @@ const GameController = (() => {
     DOM.renderBoard(player.getBoard(), 'player-board');
     DOM.renderBoard(computer.getBoard(), 'computer-board', true);
 
-    DOM.updateMessage("Player's turn");
+    DOM.updateMessage("Your turn...");
 
     // Add event listeners after a short delay to ensure DOM is ready
     setTimeout(addEventListeners, 100);
@@ -243,7 +243,7 @@ const GameController = (() => {
       }
 
       currentPlayer = player;
-      DOM.updateMessage("Player's turn");
+      DOM.updateMessage("Your turn...");
       addEventListeners();
     }, 1000);
   };
