@@ -95,8 +95,17 @@ const GameBoard = (() => {
 
     // Get board state for testing/debugging
     const getBoard = () => board;
+    
     const getMissedShots = () => missedShots;
     const getShips = () => ships;
+    
+    const isSunkShipAt = (x, y) => {
+      const ship = board[y][x];
+      if (ship) {
+        return ship.getSunk(); // Check if the ship at the position is sunk
+      }
+      return false;
+    };
 
     return {
       placeShip,
@@ -108,6 +117,7 @@ const GameBoard = (() => {
       resetBoard,
       getShips,
       alreadyAttacked,
+      isSunkShipAt,
     };
   };
 

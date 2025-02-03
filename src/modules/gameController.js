@@ -8,6 +8,8 @@ const GameController = (() => {
   let lastHit = null;
   let hitStack = [];
   let direction = null;
+  let hitShips = {};
+
 
   const initGame = () => {
     // Create player and computer
@@ -175,15 +177,24 @@ const GameController = (() => {
       DOM.renderBoard(player.getBoard(), 'player-board');
 
       if (attackResult === 'hit') {
+        let ship = player.getBoard().getShips().find((ship) => 
+          ship.getCells().some((cell) => cell.x === attackCoords[0] && cell.y === attackCoords[1])
+        );
+        
+        if (ship) {
+          if (!hitShips[ship]) hitShips[ship] = [];
+          hitShips[ship].push(attackCoords);
+        }
+
         if (!lastHit) {
           lastHit = attackCoords;
           addAdjacentTargets(lastHit); // Add 4 adjacent cells to hitStack
         } else {
-          if (!direction) {
+           // If multiple adjacent ships exist, don't overwrite hitStack
+          if (!direction || (ship && !hitShips[ship].includes(lastHit))) {
             determineDirection(lastHit, attackCoords);
-            hitStack = []; 
             addNextTarget(attackCoords);
-          }else {
+          } else {
             addNextTarget(attackCoords);
           }
         }
@@ -198,14 +209,20 @@ const GameController = (() => {
 
         setTimeout(computerTurn, 1000); // Delay for better UX
         return;
-      } else if (attackResult === 'miss') {
-        if (direction) {
-          reverseDirection();
-        }
-        DOM.updateMessage('Computer missed!');
-
       }else if (attackResult === 'sunk') {
+        let ship = player.getBoard().getShips().find((ship) => 
+          ship.getCells().some((cell) => cell.x === attackCoords[0] && cell.y === attackCoords[1])
+        );
+        
+        if (ship) delete hitShips[ship]; // Remove sunk ship from tracking
+
+        // Check if there are still hit ships nearby
+      if (Object.keys(hitShips).length > 0) {
+        continueAttacking(); 
+      } else {
         resetAttackStrategy();
+      }
+
         DOM.updateMessage('Computer sank your ship!');
 
         if (player.getBoard().areAllShipsSunk()) {
@@ -217,6 +234,12 @@ const GameController = (() => {
 
         setTimeout(computerTurn, 1000);
         return;
+      } else if (attackResult === 'miss') {
+        if (direction) {
+          reverseDirection();
+        }
+        DOM.updateMessage('Computer missed!');
+
       }
 
       currentPlayer = player;
@@ -224,6 +247,19 @@ const GameController = (() => {
       addEventListeners();
     }, 1000);
   };
+
+  const continueAttacking = () => {
+    for (let ship in hitShips) {
+      if (hitShips[ship].length > 0) {
+        let lastHit = hitShips[ship][hitShips[ship].length - 1];
+        addAdjacentTargets(lastHit); // Continue attacking around last hit
+        setTimeout(computerTurn, 1000);
+        return;
+      }
+    }
+    resetAttackStrategy(); // If no known hits remain, reset strategy
+  };
+  
 
   const addAdjacentTargets = ([x, y]) => {
     const potentialMoves = [
@@ -234,20 +270,45 @@ const GameController = (() => {
   };
   
   const addNextTarget = ([x, y]) => {
-    if (direction === 'horizontal') {
-      if (isValidMove(x + 1, y)) hitStack.push([x + 1, y]);
-      else if (isValidMove(x - 1, y)) hitStack.push([x - 1, y]); // If forward fails, try backward
-    } else if (direction === 'vertical') {
-      if (isValidMove(x, y + 1)) hitStack.push([x, y + 1]);
-      else if (isValidMove(x, y - 1)) hitStack.push([x, y - 1]);
+    let directions = [
+      [x + 1, y], // Right
+      [x - 1, y], // Left
+      [x, y + 1], // Down
+      [x, y - 1], // Up
+    ];
+  
+    for (let [dx, dy] of directions) {
+      if (isValidMove(dx, dy)) {
+        // Check if there's a ship at (dx, dy)
+        let ship = player.getBoard().getShips().find((ship) =>
+          ship.getCells().some((cell) => cell.x === dx && cell.y === dy)
+        );
+  
+        if (ship) {
+          hitStack.push([dx, dy]); // Prioritize adjacent ship cells
+        }
+      }
     }
   };
+  
+  
 
   const resetAttackStrategy = () => {
+    hitStack = hitStack.filter(([x, y]) => {
+      // Find the ship at the target coordinates
+      let ship = player.getBoard().getShips().find((ship) => 
+        ship.getCells().some((cell) => cell.x === x && cell.y === y)
+      );
+  
+      // If a ship is found and it's sunk, exclude this position from the hitStack
+      return ship ? !ship.getSunk() : true;
+    });
+  
     lastHit = null;
     direction = null;
-    hitStack = [];
   };
+  
+
    
   const filterDirectionalTargets = () => {
     if (!direction || !lastHit) return;
