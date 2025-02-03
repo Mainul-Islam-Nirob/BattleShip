@@ -9,21 +9,20 @@ const GameController = (() => {
   let hitStack = [];
   let direction = null;
   let hitShips = {};
+  let savedShipPlacement = null; //// Store ship positions for the human player
 
 
   const initGame = () => {
-    // Create player and computer
-    player = Player.createPlayer('Player');
     computer = Player.createPlayer('Computer', true);
+    player = Player.createPlayer('Player');
 
-    // Randomly place ships for computer
     placeShips(computer);
 
     currentPlayer = player;
 
-    // Initial render of the boards
-    DOM.renderBoard(player.getBoard(), 'player-board');
-    DOM.renderBoard(computer.getBoard(), 'computer-board', true);
+    // Render the boards
+    renderPlayerBoard(player);
+    DOM.renderBoard(computer.getBoard(), 'computer-board', true); 
 
     DOM.updateMessage("Your turn...");
 
@@ -57,37 +56,19 @@ const GameController = (() => {
       { name: 'Battleship', length: 4 },
       { name: 'Carrier', length: 5 },
     ];
+    let placements = []; // Temporary storage for the current placement
 
     ships.forEach((ship) => {
-      const { x, y, direction } = generateRandomPosition(player.getBoard(), ship.length);
-      player.getBoard().placeShip(ship.name, ship.length, x, y, direction);
+        const { x, y, direction } = generateRandomPosition(player.getBoard(), ship.length);
+        player.getBoard().placeShip(ship.name, ship.length, x, y, direction);
+        placements.push({ name: ship.name, length: ship.length, x, y, direction });
     });
+
+    // Save ship placement only for the "Player"
+    if (player.getName() === 'Player') {
+        savedShipPlacement = placements;
+    }
   };
-
-  // const addRandomPlacementButton = () => {
-  //   const button = document.createElement('button');
-  //   button.textContent = 'Place Ships Randomly';
-
-  //   button.addEventListener('click', () => {
-  //     resetGame(); // Reset the game state
-
-  //     // Place ships randomly on both boards
-  //     placeShips(player);
-  //     placeShips(computer);
-
-  //     // Reset turn to player
-  //     currentPlayer = player;
-
-  //     DOM.renderBoard(player.getBoard(), 'player-board');
-  //     DOM.renderBoard(computer.getBoard(), 'computer-board', true); 
-      
-  //     DOM.updateMessage('Ships have been placed randomly! Game starts now!');
-  //     addEventListeners();
-  //   });
-  
-  //   // document.body.appendChild(button);
-  // };
-  
 
   const addEventListeners = () => {
     const computerCells = document.querySelectorAll('#computer-board .enemy-cell');
@@ -95,6 +76,21 @@ const GameController = (() => {
       cell.addEventListener('click', handlePlayerAttack);
     });
   };
+
+  const renderPlayerBoard = (player) => {
+    if (player.getName() === 'Player' && savedShipPlacement) {
+        // Reset board
+        player.getBoard().resetBoard();
+
+        // Reapply saved ship placement
+        savedShipPlacement.forEach(({ name, length, x, y, direction }) => {
+            player.getBoard().placeShip(name, length, x, y, direction);
+        });
+    }
+
+    // Render the board
+    DOM.renderBoard(player.getBoard(), 'player-board');
+};
 
   const handlePlayerAttack = (e) => {
     if (currentPlayer !== player) return; // Ensure it's the player's turn
