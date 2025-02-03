@@ -19,9 +19,6 @@ const GameController = (() => {
     // Randomly place ships for computer
     placeShips(computer);
 
-    // Add random placement button for the player
-    addRandomPlacementButton();
-
     currentPlayer = player;
 
     // Initial render of the boards
@@ -51,6 +48,8 @@ const GameController = (() => {
   };
 
   const placeShips = (player) => {
+    player.getBoard().resetBoard();
+
     const ships = [
       { name: 'Destroyer', length: 2 },
       { name: 'Submarine', length: 3 },
@@ -65,29 +64,29 @@ const GameController = (() => {
     });
   };
 
-  const addRandomPlacementButton = () => {
-    const button = document.createElement('button');
-    button.textContent = 'Place Ships Randomly';
+  // const addRandomPlacementButton = () => {
+  //   const button = document.createElement('button');
+  //   button.textContent = 'Place Ships Randomly';
 
-    button.addEventListener('click', () => {
-      resetGame(); // Reset the game state
+  //   button.addEventListener('click', () => {
+  //     resetGame(); // Reset the game state
 
-      // Place ships randomly on both boards
-      placeShips(player);
-      placeShips(computer);
+  //     // Place ships randomly on both boards
+  //     placeShips(player);
+  //     placeShips(computer);
 
-      // Reset turn to player
-      currentPlayer = player;
+  //     // Reset turn to player
+  //     currentPlayer = player;
 
-      DOM.renderBoard(player.getBoard(), 'player-board');
-      DOM.renderBoard(computer.getBoard(), 'computer-board', true); 
+  //     DOM.renderBoard(player.getBoard(), 'player-board');
+  //     DOM.renderBoard(computer.getBoard(), 'computer-board', true); 
       
-      DOM.updateMessage('Ships have been placed randomly! Game starts now!');
-      addEventListeners();
-    });
+  //     DOM.updateMessage('Ships have been placed randomly! Game starts now!');
+  //     addEventListeners();
+  //   });
   
-    document.body.appendChild(button);
-  };
+  //   // document.body.appendChild(button);
+  // };
   
 
   const addEventListeners = () => {
@@ -450,6 +449,7 @@ const GameController = (() => {
     handlePlayerAttack,
     computerTurn,
     resetGame,
+    placeShips, 
   };
 })();
 
