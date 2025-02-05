@@ -8,7 +8,7 @@ Live Site URL: [Enjoy Playing Battleship Here 🚢🔥](https://mainul-islam-nir
 
 ### The Final Output
 
-![Place Ships](./src/images/placeShips.png)
+![Place Ships](./src/images/place-ships.png)
 ![Battle Field](./src/images/battle.png)
 
 ## Features
