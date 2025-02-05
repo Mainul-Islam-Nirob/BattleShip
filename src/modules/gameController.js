@@ -107,12 +107,12 @@ const GameController = (() => {
     const attackResult = player.attack(computer.getBoard(), x, y);
 
       if (attackResult === 'hit') {
-        DOM.updateMessage('You hit a ship!');
+        DOM.updateMessage('You hit a ship! 🚢');
         DOM.renderBoard(computer.getBoard(), 'computer-board', true); //*** */
         addEventListeners(); // Reattach event listeners to the re-rendered board
 
         if (computer.getBoard().areAllShipsSunk()) {
-          DOM.updateMessage('Player wins! 🎉');
+          DOM.updateMessage("Victory! You're the winner! 🎉");
           endGame();
           return;
       }
@@ -122,12 +122,12 @@ const GameController = (() => {
     }else if (attackResult === 'miss') {
         DOM.updateMessage('You missed!');
       }else if (attackResult === 'sunk') {  
-        DOM.updateMessage('You sunk a ship! 🚢🔥');
+        DOM.updateMessage('Boom! You sunk a ship 🔥');
         DOM.renderBoard(computer.getBoard(), 'computer-board', true);
         addEventListeners();
 
         if (computer.getBoard().areAllShipsSunk()) {
-          DOM.updateMessage('Player wins! 🎉');
+          DOM.updateMessage("Victory! You're the winner! 🎉");
           endGame();
         }
         return;

@@ -80,6 +80,7 @@ body {
   background-color: rgba(0, 0, 50, 0.8);
   color: white; 
   font-weight: bold;
+  line-height: 1em; 
   font-size: 18px;
   padding: 12px 20px;
   margin-bottom: 25px;
