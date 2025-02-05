@@ -7,6 +7,7 @@ A classic Battleship game built using HTML, CSS, and JavaScript, featuring an in
 Live Site URL: [Enjoy Playing Battleship Here 🚢🔥](https://mainul-islam-nirob.github.io/BattleShip/dist)
 
 ### The Final Output
+
 ![Place Ships](./src/images/placeShips.png)
 ![Battle Field](./src/images/battle.png)
 
@@ -36,7 +37,7 @@ Live Site URL: [Enjoy Playing Battleship Here 🚢🔥](https://mainul-islam-nir
 * **Make the bot smarter**
 * **Enhance UI:**
   * Implement drag-and-drop functionality.
-  * Add images for ships.
+  * Show actual image for ships.
   * Display remaining and sunk ships for both players between the two boards.
   * Improve UI animations and effects.
   * Make responsive for Mobile device
@@ -56,6 +57,4 @@ Live Site URL: [Enjoy Playing Battleship Here 🚢🔥](https://mainul-islam-nir
 - Twitter - [@mainul](https://twitter.com/Mainuli96601040)
 - Github - [@mainul](https://github.com/Mainul-Islam-Nirob)
 
-
 ---
-
