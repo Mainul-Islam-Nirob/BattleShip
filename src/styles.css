@@ -139,3 +139,21 @@ body {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+.restart-btn {
+  background: linear-gradient(to bottom, #c12d3f, #a01535);
+  border: 2px solid #8b0032;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+.restart-btn:hover {
+  background: linear-gradient(to bottom, #e03c4a, #a91b40);
+  transform: scale(1.05);
+}
+
+.restart-btn:active {
+  background: #9b002a;
+  box-shadow: none;
+  transform: scale(0.98);
+}
